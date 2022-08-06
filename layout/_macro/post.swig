@@ -165,6 +165,45 @@
     {#################}
     {### POST BODY ###}
     {#################}
+    {%- if is_index and post.thumbnail and post.thumbnail.length %}
+    <div class="post-body{%- if post.direction and post.direction.toLowerCase() === 'rtl' %} rtl{%- endif %}" itemprop="articleBody">
+
+        <div class="post-gallery" itemscope itemtype="http://schema.org/ImageGallery">
+          {%- for photo in post.thumbnail %}
+            <img src="{{ url_for(photo) }}" itemprop="contentUrl">
+          {%- endfor %}
+          <div>
+          {%- if post.description and theme.excerpt_description %}
+            <p>{{ post.description }}</p>
+            <!--noindex-->
+            {%- if theme.read_more_btn %}
+              <div class="post-button">
+                <a class="btn" href="{{ url_for(post.path) }}">
+                  {{ __('post.read_more') }} &raquo;
+                </a>
+              </div>
+            {%- endif %}
+            <!--/noindex-->
+          {% elif post.excerpt %}
+            {{ post.excerpt }}
+            <!--noindex-->
+            {%- if theme.read_more_btn %}
+              <div class="post-button">
+                <a class="btn" href="{{ url_for(post.path) }}#more" rel="contents">
+                  {{ __('post.read_more') }} &raquo;
+                </a>
+              </div>
+            {%- endif %}
+            <!--/noindex-->
+          {% else %}
+            {{ post.content }}
+          {%- endif %}
+
+          </div>
+        </div>
+
+    </div>
+    {% else %}    
     <div class="post-body{%- if post.direction and post.direction.toLowerCase() === 'rtl' %} rtl{%- endif %}" itemprop="articleBody">
 
       {# Gallery support #}
@@ -206,6 +245,7 @@
         {{ post.content }}
       {%- endif %}
     </div>
+    {%- endif %}
 
     {#####################}
     {### END POST BODY ###}
